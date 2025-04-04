@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: petngo-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/AdyaPatil/petngo-argocd.git'  # ⬅️ Update if needed
+    targetRevision: HEAD
+    path: .  # root folder (contains all YAMLs)
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true         # delete removed resources
+      selfHeal: true      # correct changes not made via Git
+    syncOptions:
+      - CreateNamespace=true
