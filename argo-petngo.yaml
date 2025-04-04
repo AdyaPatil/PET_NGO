@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/AdyaPatil/petngo-argocd.git'  # ⬅️ Update if needed
+    repoURL: 'https://github.com/AdyaPatil/PET_NGO.git'  # ⬅️ Update if needed
     targetRevision: main
     path: .  # root folder (contains all YAMLs)
   destination:
