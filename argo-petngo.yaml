@@ -6,15 +6,15 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/AdyaPatil/PET_NGO.git'  # ⬅️ Update if needed
+    repoURL: 'https://github.com/AdyaPatil/PET_NGO.git' 
     targetRevision: main
-    path: .  # root folder (contains all YAMLs)
+    path: .  
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: default
   syncPolicy:
     automated:
-      prune: true         # delete removed resources
-      selfHeal: true      # correct changes not made via Git
+      prune: true         
+      selfHeal: true      
     syncOptions:
       - CreateNamespace=true
