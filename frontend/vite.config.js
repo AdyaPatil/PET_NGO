@@ -2,9 +2,12 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
 // https://vitejs.dev/config/
-export default {
+export default defineConfig({
+  // ... other config
   server: {
-    allowedHosts: 'all'
+    allowedHosts: [
+      'all'
+    ]
   }
-}
+})
 
