@@ -1,0 +1,7 @@
+{
+  "port": 5000,
+  "backend_api": "http://127.0.0.1:8000",
+  "google_Maps_Api_Key": "AIzaSyA-3kxngMgQU3bG0S47QRWBgwUPpbFfsEw",
+  "google_Ads_Client": "ca-pub-8260775840100948",
+  "google_Ads_Slot": "9093900815"
+}
