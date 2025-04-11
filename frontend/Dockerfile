@@ -1,17 +1,24 @@
+# Use official Node.js Alpine image for smaller size
 FROM node:18-alpine as petfront
 
+# Set working directory
 WORKDIR /app/petfront
 
-COPY package.json package-lock.json* /app/petfront
+# Create config directory to allow volume mounting of config.json
+RUN mkdir -p /app/petfront/config
 
-RUN npm install 
+# Copy package files and install dependencies
+COPY package.json package-lock.json* ./
+RUN npm install
 
-RUN npm i
+# Copy the rest of the source code
+COPY . .
 
-COPY . /app/petfront
-
+# Build the project
 RUN npm run build
 
-EXPOSE 3600
+# Expose the frontend port (change this if your app runs on another port)
+EXPOSE 3000
 
-CMD ["npm", "start"] 
+# Start the frontend app
+CMD ["npm", "start"]
