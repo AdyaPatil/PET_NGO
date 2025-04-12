@@ -1,30 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-deployment
+  name: petfront-deployment
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      app: frontend
+      app: petfront
   template:
     metadata:
       labels:
-        app: frontend
+        app: petfront
     spec:
       containers:
       - name: petfront
-        image: adi2634/petngo-frontend:latest
+        image: your-docker-hub-repo/petfront:latest
         ports:
         - containerPort: 3000
         volumeMounts:
-        - name: config-volume
-          mountPath: /app/petfront/config/config.json
-          subPath: config.json
+        - name: frontend-config-volume
+          mountPath: /app/config/config.json
+          subPath: frontend_config.json
       volumes:
-      - name: config-volume
+      - name: frontend-config-volume
         secret:
-          secretName: frontend-secret
-          items:
-          - key: config.json
-            path: config.json
+          secretName: frontend-config
