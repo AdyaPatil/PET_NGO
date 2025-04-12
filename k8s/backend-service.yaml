@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: petback-service
+  name: backend-service
 spec:
   selector:
-    app: petback
+    app: backend
   ports:
     - protocol: TCP
       port: 8000
