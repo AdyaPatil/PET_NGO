@@ -22,8 +22,6 @@ services:
       - "3000:3000"
     depends_on:
       - backend
-    volumes:
-      - /home/ec2-user/PET_NGO/frontend/config/config.json:/app/petfront/config/config.json:ro
     networks:
       - petnet
 
