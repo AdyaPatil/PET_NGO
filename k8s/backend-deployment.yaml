@@ -1,22 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend-deployment
+  name: pet-backend
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
-      app: backend
+      app: pet-backend
   template:
     metadata:
       labels:
-        app: backend
+        app: pet-backend
     spec:
       containers:
-      - name: backend
-        image: adi2634/petngo-backend:latest
-        ports:
-        - containerPort: 8000
-        envFrom:
-        - configMapRef:
-            name: backend-config
+        - name: pet-backend
+          image: yourdockerusername/pet-backend:latest
+          ports:
+            - containerPort: 8000
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/petback/config.json
+              subPath: config.json
+      volumes:
+        - name: config-volume
+          secret:
+            secretName: backend-config-secret
