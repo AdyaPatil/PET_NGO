@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: pet-frontend
-          image: yourdockerusername/pet-frontend:latest
+          image: adi2634/pet-frontend:latest
           ports:
             - containerPort: 3000
           volumeMounts:
