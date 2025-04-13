@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: pet-backend
-          image: yourdockerusername/pet-backend:latest
+          image: adi2634/pet-backend:latest
           ports:
             - containerPort: 8000
           volumeMounts:
