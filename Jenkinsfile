@@ -224,10 +224,4 @@ pipeline {
     }
   }
 
-  post {
-    failure {
-        slackSend(channel: '#your-channel', message: "Build failed: ${env.JOB_NAME} ${env.BUILD_NUMBER}")
-    }
-}
-
 }
