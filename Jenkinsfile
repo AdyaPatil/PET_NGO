@@ -130,9 +130,11 @@ pipeline {
       
       // Split version into major and minor parts
       def (major, minor) = currentVersion.tokenize('.')
-      major = major.toInteger()
-      minor = minor.toFloat()
       
+      // Convert major and minor to integers and floats as needed
+      major = major.toInteger()
+      minor = minor ? minor.toFloat() : 0.0  // Ensure minor is a valid float, default to 0.0 if null
+
       // Increment the minor version (e.g., 1 -> 1.5, 1.5 -> 2)
       minor += 0.5
       if (minor >= 2) {
@@ -160,6 +162,7 @@ pipeline {
     }
   }
 }
+
 
 
     stage('Verify Trivy') {
