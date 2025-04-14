@@ -125,6 +125,25 @@ pipeline {
         """
       }
     }
+
+    stage('Trivy Scan for Vulnerabilities') {
+            steps {
+                script {
+                    echo "Running Trivy Scan for Frontend Image..."
+                    sh """
+                    trivy image $DOCKERHUB_USER/pet-frontend:latest --severity HIGH,CRITICAL --exit-code 1 || echo "Vulnerabilities found!"
+                    """
+
+                    echo "Running Trivy Scan for Backend Image..."
+                    sh """
+                    trivy image $DOCKERHUB_USER/pet-backend:latest --severity HIGH,CRITICAL --exit-code 1 || echo "Vulnerabilities found!"
+                    """
+                }
+            }
+        }
+
+
+
     stage('Push Docker Images') {
       steps {
         sh """
