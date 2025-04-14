@@ -126,6 +126,13 @@ pipeline {
       }
     }
 
+    stage('Verify Trivy') {
+    steps {
+        sh 'trivy --version'
+    }
+}
+
+
     stage('Trivy Scan for Vulnerabilities') {
             steps {
                 script {
