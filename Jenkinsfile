@@ -85,7 +85,7 @@ pipeline {
                             sh '''
                             ${SONARQUBE_SCANNER_HOME}/bin/sonar-scanner \
                             -Dsonar.projectKey=pet-ngo-frontend \
-                            -Dsonar.sources=src \
+                            -Dsonar.sources=frontend/src \
                             -Dsonar.host.url=${SONAR_URL} \
                             -Dsonar.login=${SONAR_TOKEN} \
                             -Dsonar.exclusions="**/node_modules/**,**/build/**" \
