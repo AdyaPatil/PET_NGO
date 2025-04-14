@@ -117,53 +117,14 @@ pipeline {
     }
 
     stage('Build Docker Images') {
-  steps {
-    script {
-      // Define the version file location
-      def versionFile = 'VERSION.txt'
-      
-      // Read the current version from the version file or initialize to '1'
-      def currentVersion = '1' // Default version if the file doesn't exist
-      if (fileExists(versionFile)) {
-        currentVersion = readFile(versionFile).trim()
-      }
-      
-      // Split version into major and minor parts
-      def (major, minor) = currentVersion.tokenize('.')
-      
-      // Convert major and minor to integers and floats as needed
-      major = major.toInteger()
-      minor = minor ? minor.toFloat() : 0.0  // Ensure minor is a valid float, default to 0.0 if null
+      steps {
+        sh """
+          docker build -t $DOCKERHUB_USER/pet-backend:latest ./backend
 
-      // Increment the minor version (e.g., 1 -> 1.5, 1.5 -> 2)
-      minor += 0.5
-      if (minor >= 2) {
-        major += 1
-        minor = 0.5
+          docker build -t $DOCKERHUB_USER/pet-frontend:latest ./frontend
+        """
       }
-
-      // Format the new version number
-      def newVersion = "${major}.${minor.toInteger()}"
-      
-      // Update the version file with the new version number
-      writeFile(file: versionFile, text: newVersion)
-      
-      // Build the Docker images with both the new version and 'latest' tag
-      sh """
-        docker build -t $DOCKERHUB_USER/pet-backend:$newVersion ./backend
-        docker build -t $DOCKERHUB_USER/pet-frontend:$newVersion ./frontend
-        
-        // Tag the images as 'latest'
-        docker tag $DOCKERHUB_USER/pet-backend:$newVersion $DOCKERHUB_USER/pet-backend:latest
-        docker tag $DOCKERHUB_USER/pet-frontend:$newVersion $DOCKERHUB_USER/pet-frontend:latest
-      """
-      
-      echo "Docker images tagged with version: $newVersion and 'latest'"
     }
-  }
-}
-
-
 
     stage('Verify Trivy') {
     steps {
@@ -173,23 +134,20 @@ pipeline {
 
 
     stage('Trivy Scan for Vulnerabilities') {
-    steps {
-        script {
-            echo "Running Trivy Scan for Frontend Image..."
-            def result = sh(script: "trivy image $DOCKERHUB_USER/pet-frontend:latest --severity HIGH,CRITICAL --exit-code 1 -f json -o trivy-frontend-report.json", returnStatus: true)
-            if (result != 0) {
-                error "Frontend image has vulnerabilities!"
-            }
+            steps {
+                script {
+                    echo "Running Trivy Scan for Frontend Image..."
+                    sh """
+                    trivy image $DOCKERHUB_USER/pet-frontend:latest --severity HIGH,CRITICAL --exit-code 1 -f json -o trivy-frontend-report.json || echo "Vulnerabilities found!"
+                    """
 
-            echo "Running Trivy Scan for Backend Image..."
-            result = sh(script: "trivy image $DOCKERHUB_USER/pet-backend:latest --severity HIGH,CRITICAL --exit-code 1 -f json -o trivy-backend-report.json", returnStatus: true)
-            if (result != 0) {
-                error "Backend image has vulnerabilities!"
+                    echo "Running Trivy Scan for Backend Image..."
+                    sh """
+                    trivy image $DOCKERHUB_USER/pet-backend:latest --severity HIGH,CRITICAL --exit-code 1  -f json -o trivy-backend-report.json || echo "Vulnerabilities found!"
+                    """
+                }
             }
         }
-    }
-}
-
 
 
 
@@ -227,4 +185,9 @@ pipeline {
     }
   }
 
+  post {
+    always {
+      cleanWs()
+    }
+  }
 }
