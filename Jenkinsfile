@@ -58,6 +58,58 @@ pipeline {
       }
     }
 
+      stage('Debug Sonar Environment') {
+          steps {
+                sh '''
+                if [ -d "${SONARQUBE_SCANNER_HOME}/bin" ]; then 
+                    echo "Sonar Scanner found"; 
+                else 
+                    echo "Sonar Scanner not found"; 
+                    exit 1; 
+                fi
+                echo "SonarQube URL: ${SONAR_URL}"
+                echo "SonarQube Token: ${SONAR_TOKEN}"
+                '''
+          }
+      }
+
+      stage('SonarQube Analysis') {
+            environment {
+                SONARQUBE_SCANNER_HOME = tool 'SonarScanner'
+            }
+            steps {
+                withCredentials([string(credentialsId: 'sonarToken', variable: 'SONAR_TOKEN'),
+                                 string(credentialsId: 'sonarIP', variable: 'SONAR_URL')]) {
+                    script {
+                        dir('frontend') {
+                            sh '''
+                            ${SONARQUBE_SCANNER_HOME}/bin/sonar-scanner \
+                            -Dsonar.projectKey=pet-ngo-frontend \
+                            -Dsonar.sources=src \
+                            -Dsonar.host.url=${SONAR_URL} \
+                            -Dsonar.login=${SONAR_TOKEN} \
+                            -Dsonar.exclusions="**/node_modules/**,**/build/**" \
+                            -X
+                            '''
+                        }
+
+                        dir('backend') {
+                            sh '''
+                            ${SONARQUBE_SCANNER_HOME}/bin/sonar-scanner \
+                            -Dsonar.projectKey=pet-front-backend \
+                            -Dsonar.sources=. \
+                            -Dsonar.host.url=${SONAR_URL} \
+                            -Dsonar.login=${SONAR_TOKEN} \
+                            -Dsonar.exclusions="**/migrations/**,**/__pycache__/**,**/venv/**" \
+                            -X
+                            '''
+                        }
+                    }
+                }
+            }
+        }
+
+
     stage('Login to Docker Hub') {
       steps {
         sh 'echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USER" --password-stdin'
