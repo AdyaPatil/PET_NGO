@@ -131,12 +131,12 @@ pipeline {
                 script {
                     echo "Running Trivy Scan for Frontend Image..."
                     sh """
-                    trivy image $DOCKERHUB_USER/pet-frontend:latest --severity HIGH,CRITICAL --exit-code 1 || echo "Vulnerabilities found!"
+                    trivy image $DOCKERHUB_USER/pet-frontend:latest --severity HIGH,CRITICAL --exit-code 1 -f json -o trivy-frontend-report.json || echo "Vulnerabilities found!"
                     """
 
                     echo "Running Trivy Scan for Backend Image..."
                     sh """
-                    trivy image $DOCKERHUB_USER/pet-backend:latest --severity HIGH,CRITICAL --exit-code 1 || echo "Vulnerabilities found!"
+                    trivy image $DOCKERHUB_USER/pet-backend:latest --severity HIGH,CRITICAL --exit-code 1  -f json -o trivy-backend-report.json || echo "Vulnerabilities found!"
                     """
                 }
             }
