@@ -11,7 +11,7 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "petngo-terraform-state-bucket"
+    bucket = "kiwi-destination-bucket"
     key    = "PET_NGO/Terraform-backend/terraform.tfstate"
     region = "ap-south-1"
   }

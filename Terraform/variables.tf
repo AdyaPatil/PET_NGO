@@ -45,7 +45,15 @@ variable "private_subnets" {
 
 variable "azs" {
   description = "List of availability zones"
-  default     = ["ap-south-1a", "ap-south-1b","ap-south-1c"]
+  default     = ["ap-south-1a", "ap-south-1b", "ap-south-1c"]
 }
 
+variable "ec2_instance_type" {
+  description = "Instance type for EC2 instances"
+  default     = "t3.micro"
+}
 
+variable "ec2_ami" {
+  description = "AMI ID for EC2 instances (e.g., Amazon Linux 2)"
+  default     = "ami-0f5ee92e2d63afc18"
+}
