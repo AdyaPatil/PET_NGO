@@ -116,7 +116,7 @@ pipeline {
 
    stage('quality gates'){
             steps{
-                 waitForQualityGate abortPipeline: false, credentialsId: 'SONAR_TOKEN'
+                 waitForQualityGate abortPipeline: false, credentialsId: 'SONAR_URL'
             }
         }
 
