@@ -74,40 +74,45 @@ pipeline {
       }
 
       stage('SonarQube Analysis') {
-            environment {
-                SONARQUBE_SCANNER_HOME = tool 'SonarScanner'
-            }
-            steps {
-                withCredentials([string(credentialsId: 'sonarToken', variable: 'SONAR_TOKEN'),
-                                 string(credentialsId: 'sonarIP', variable: 'SONAR_URL')]) {
-                    script {
-                        dir('frontend') {
-                            sh '''
-                            ${SONARQUBE_SCANNER_HOME}/bin/sonar-scanner \
-                            -Dsonar.projectKey=pet-ngo-frontend \
-                            -Dsonar.sources=. \
-                            -Dsonar.host.url=${SONAR_URL} \
-                            -Dsonar.login=${SONAR_TOKEN} \
-                            -Dsonar.exclusions="**/node_modules/**,**/build/**" \
-                            -X
-                            '''
-                        }
-
-                        dir('backend') {
-                            sh '''
-                            ${SONARQUBE_SCANNER_HOME}/bin/sonar-scanner \
-                            -Dsonar.projectKey=pet-front-backend \
-                            -Dsonar.sources=. \
-                            -Dsonar.host.url=${SONAR_URL} \
-                            -Dsonar.login=${SONAR_TOKEN} \
-                            -Dsonar.exclusions="**/migrations/**,**/__pycache__/**,**/venv/**" \
-                            -X
-                            '''
-                        }
-                    }
-                }
-            }
+  environment {
+    SONARQUBE_SCANNER_HOME = tool 'SonarScanner'
+  }
+  steps {
+    withCredentials([
+      string(credentialsId: 'sonarToken', variable: 'SONAR_TOKEN'),
+      string(credentialsId: 'sonarIP', variable: 'SONAR_URL')
+    ]) {
+      script {
+        dir('frontend') {
+          sh '''
+          ${SONARQUBE_SCANNER_HOME}/bin/sonar-scanner \
+          -Dsonar.projectKey=pet-ngo-frontend \
+          -Dsonar.sources=. \
+          -Dsonar.host.url=${SONAR_URL} \
+          -Dsonar.login=${SONAR_TOKEN} \
+          -Dsonar.exclusions="**/node_modules/**,**/build/**" \
+          -Dsonar.newCode.period=1 \
+          -X
+          '''
         }
+
+        dir('backend') {
+          sh '''
+          ${SONARQUBE_SCANNER_HOME}/bin/sonar-scanner \
+          -Dsonar.projectKey=pet-front-backend \
+          -Dsonar.sources=. \
+          -Dsonar.host.url=${SONAR_URL} \
+          -Dsonar.login=${SONAR_TOKEN} \
+          -Dsonar.exclusions="**/migrations/**,**/__pycache__/**,**/venv/**" \
+          -Dsonar.newCode.period=1 \
+          -X
+          '''
+        }
+      }
+    }
+  }
+}
+
 
    stage('SonarQube Quality Gate') {
   steps {
