@@ -113,17 +113,6 @@ pipeline {
   }
 }
 
-
-   stage('quality gates'){
-            steps{
-                 waitForQualityGate abortPipeline: false, credentialsId: 'SONAR_URL'
-            }
-        }
-
-
-
-
-
     stage('Login to Docker Hub') {
       steps {
         sh 'echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USER" --password-stdin'
