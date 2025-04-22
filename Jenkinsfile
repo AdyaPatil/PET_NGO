@@ -105,16 +105,31 @@ pipeline {
 }
 
 
-    stage('Check SonarQube Quality Gate') {
-      steps {
-        script {
-          def qualityGateStatus = waitForQualityGate(timeout: 1) // Timeout after 1 minute if not completed
-          if (qualityGateStatus.status != 'OK') {
-            error "Quality gate failed. The build will be aborted."
-          }
+    stage('Check Quality Gates') {
+  steps {
+    script {
+      def FRONTEND_KEY = 'pet-ngo-frontend'
+      def BACKEND_KEY = 'pet-front-backend'
+      def SONAR_TOKEN = credentials('sonarToken')
+      def SONAR_HOST =  credentials('sonarIP')
+
+      def checkQualityGate = { projectKey ->
+        def response = httpRequest authentication: 'SONAR_TOKEN',
+            url: "${SONAR_HOST}/api/qualitygates/project_status?projectKey=${projectKey}"
+        def json = readJSON text: response.content
+        if (json.projectStatus.status != 'OK') {
+          error "Quality Gate failed for ${projectKey}"
+        } else {
+          echo "Quality Gate passed for ${projectKey}"
         }
       }
+
+      checkQualityGate(FRONTEND_KEY)
+      checkQualityGate(BACKEND_KEY)
     }
+  }
+}
+
 
     stage('Login to Docker Hub') {
       steps {
