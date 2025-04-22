@@ -113,6 +113,17 @@ pipeline {
   }
 }
 
+    stage('Check SonarQube Quality Gate') {
+      steps {
+        script {
+          def qualityGateStatus = waitForQualityGate(timeout: 1) // Timeout after 1 minute if not completed
+          if (qualityGateStatus.status != 'OK') {
+            error "Quality gate failed. The build will be aborted."
+          }
+        }
+      }
+    }
+
     stage('Login to Docker Hub') {
       steps {
         sh 'echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USER" --password-stdin'
