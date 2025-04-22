@@ -114,22 +114,11 @@ pipeline {
 }
 
 
-  stage('SonarQube Quality Gate') {
-      steps {
-        timeout(time: 1, unit: 'MINUTES') {
-          script {
-            withSonarQubeEnv('SonarScanner') { // Use the dynamic server URL here
-              def qualityGate = waitForQualityGate()
-              if (qualityGate.status != 'OK') {
-                error "Pipeline aborted due to Quality Gate failure: ${qualityGate.status}"
-              } else {
-                echo "Quality Gate passed: ${qualityGate.status}"
-              }
+   stage('quality gates'){
+            steps{
+                 waitForQualityGate abortPipeline: false, credentialsId: 'SONAR_TOKEN'
             }
-          }
         }
-      }
-    }
 
 
 
