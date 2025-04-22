@@ -118,7 +118,7 @@ pipeline {
       steps {
         timeout(time: 1, unit: 'MINUTES') {
           script {
-            withSonarQubeEnv('sonarIP') { // Use the dynamic server URL here
+            withSonarQubeEnv('SONAR_URL') { // Use the dynamic server URL here
               def qualityGate = waitForQualityGate()
               if (qualityGate.status != 'OK') {
                 error "Pipeline aborted due to Quality Gate failure: ${qualityGate.status}"
