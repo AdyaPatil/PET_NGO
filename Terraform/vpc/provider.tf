@@ -1,6 +1,8 @@
 provider "aws" {
-  region = var.region
+  region  = var.region
+  profile = var.profile
 }
+
 
 terraform {
   required_providers {
@@ -11,8 +13,9 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "kiwi-destination-bucket"
+    bucket = "petngo-infra-bucket"
     key    = "PET_NGO/Terraform-backend/terraform.tfstate"
     region = "ap-south-1"
+    profile = "default"
   }
 }
