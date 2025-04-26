@@ -192,6 +192,57 @@ pipeline {
     }
   }
 
+  stage('Configure Prometheus Monitoring for Applications') {
+  steps {
+    script {
+      sh '''
+      echo "Creating ServiceMonitor for backend and frontend..."
+
+      # Backend ServiceMonitor
+      cat <<EOF | kubectl apply -f -
+      apiVersion: monitoring.coreos.com/v1
+      kind: ServiceMonitor
+      metadata:
+        name: pet-backend-monitor
+        namespace: default
+        labels:
+          release: prometheus
+      spec:
+        selector:
+          matchLabels:
+            app: pet-backend
+        endpoints:
+          - port: http
+            path: /metrics
+            interval: 30s
+      EOF
+
+      # Frontend ServiceMonitor
+      cat <<EOF | kubectl apply -f -
+      apiVersion: monitoring.coreos.com/v1
+      kind: ServiceMonitor
+      metadata:
+        name: pet-frontend-monitor
+        namespace: default
+        labels:
+          release: prometheus
+      spec:
+        selector:
+          matchLabels:
+            app: pet-frontend
+        endpoints:
+          - port: http
+            path: /metrics
+            interval: 30s
+      EOF
+
+      echo "ServiceMonitors for backend and frontend created."
+      '''
+    }
+  }
+}
+
+
   post {
     always {
       cleanWs()
