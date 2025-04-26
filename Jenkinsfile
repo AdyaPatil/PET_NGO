@@ -190,7 +190,6 @@ pipeline {
         """
       }
     }
-  }
 
   stage('Configure Prometheus Monitoring for Applications') {
   steps {
@@ -239,6 +238,7 @@ pipeline {
       echo "ServiceMonitors for backend and frontend created."
       '''
     }
+  }
   }
 }
 
