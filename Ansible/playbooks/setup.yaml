@@ -1,0 +1,9 @@
+- name: Prepare EC2 for CI/CD pipeline
+  hosts: app_servers
+  become: yes
+  roles:
+    - common
+    - docker
+    - kubectl
+    - awscli
+    - helm

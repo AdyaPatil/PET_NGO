@@ -1,0 +1,14 @@
+- name: Update YUM packages
+  yum:
+    name: '*'
+    state: latest
+
+- name: Install base tools
+  yum:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - unzip
+    - curl
+    - git
+    - python3
