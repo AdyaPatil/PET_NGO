@@ -34,29 +34,40 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-UPLOAD_FOLDER = (
-    "uploads"  # Created folder to store uploaded images if not already present.
-)
+
+# Load Google API key from config.json
+with open("config.json") as config_file:
+    config_data = json.load(config_file)
+    GOOGLE_API_KEY = config_data.get("google-api-key", {}).get("GOOGLE_API_KEY")
+
+#Validate presence of API key
+if not GOOGLE_API_KEY:
+    raise ValueError("GOOGLE_API_KEY is missing in config.json")
+
+# Create upload folder if not exists
+UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+# Serve uploaded files
+app.mount("/uploads", StaticFiles(directory=UPLOAD_FOLDER), name="uploads")
 
-# Serve files from the upload folder
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
-genai.configure(api_key="AIzaSyAfHNa6EnU9Dy8iZHFZaBgFzLqtdZ3T_cY")
+# Configure Google GenAI with API key
+genai.configure(api_key=GOOGLE_API_KEY)
 generative_model = genai.GenerativeModel("gemini-pro")
 
-
+# Token verification logic
 def get_token(user_id: str, req: Request):
     try:
-        # print(user_id)
         if "Authorization" not in req.headers:
             raise HTTPException(status_code=401, detail="login again...")
+
         token = req.headers["Authorization"].split(" ")[1]
         if not token:
             raise HTTPException(status_code=401, detail="login again")
 
         token_status = DB.verify_token(user_id, token)
         return token_status
+
     except HTTPException as e:
         raise e
     except Exception as e:
